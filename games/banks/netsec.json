@@ -1,0 +1,361 @@
+{
+ "game-port-deduce": {
+  "kind": "input",
+  "intro": "From the scan output, name the service or the behaviour.",
+  "challenges": [
+   {
+    "q": "Port 22 open on a Linux host. Service?",
+    "answers": [
+     "ssh",
+     "openssh"
+    ],
+    "hint": "Secure shell"
+   },
+   {
+    "q": "Ports 139 and 445 open on a Windows host. Service?",
+    "answers": [
+     "smb",
+     "netbios",
+     "cifs",
+     "windows file sharing"
+    ],
+    "hint": "File sharing"
+   },
+   {
+    "q": "nmap reports 22/tcp filtered and 80/tcp open. What does filtered mean?",
+    "answers": [
+     "filtered",
+     "firewall",
+     "dropped",
+     "blocked by firewall"
+    ],
+    "hint": "No response arrived"
+   },
+   {
+    "q": "Port 3389 open. Service?",
+    "answers": [
+     "rdp",
+     "remote desktop"
+    ],
+    "hint": "Windows remote desktop"
+   },
+   {
+    "q": "A SYN scan of UDP port 161 returns a response, port 53 also responds. What two services?",
+    "answers": [
+     "snmp and dns",
+     "snmp, dns",
+     "snmp dns"
+    ],
+    "hint": "161 and 53"
+   },
+   {
+    "q": "nmap -O reports the target has a TTL of 64 in replies. Likely OS family?",
+    "answers": [
+     "linux",
+     "unix",
+     "linux/unix"
+    ],
+    "hint": "64 is the default TTL for one family"
+   },
+   {
+    "q": "Port 8080 open serving an HTTP banner but the main site is on 80. What is 8080 likely?",
+    "answers": [
+     "an alternate web service",
+     "tomcat",
+     "an admin interface",
+     "a proxy"
+    ],
+    "hint": "Alternate HTTP port, often management or app server"
+   },
+   {
+    "q": "All 1000 scanned ports report closed with identical reset behaviour, but the host pings. What does this suggest?",
+    "a": [
+     "Nothing",
+     "No services on those ports, the host is up",
+     "Firewall",
+     "Offline"
+    ],
+    "c": 1,
+    "why": "Closed with consistent resets and a live host means the scan worked and nothing is listening."
+   }
+  ]
+ },
+ "game-beacon-hunt": {
+  "kind": "quiz",
+  "intro": "Find the periodic callout in the quiet traffic.",
+  "challenges": [
+   {
+    "q": "Hosts A, B, C, D all contact many destinations. Host C contacts one destination every 60 seconds with a constant 512-byte request. Which is beaconing?",
+    "a": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "c": 2,
+    "why": "Regular interval plus constant size to a single destination is beaconing."
+   },
+   {
+    "q": "Why is beaconing detectable even over TLS?",
+    "a": [
+     "It is not",
+     "Timing and packet size patterns survive encryption",
+     "Certificates are plaintext only",
+     "TLS is broken"
+    ],
+    "c": 1,
+    "why": "Metadata is unencrypted, and regularity is the tell."
+   },
+   {
+    "q": "Traffic is to the same CDN the company legitimately uses, at regular intervals. Can this be C2?",
+    "a": [
+     "No",
+     "Yes, abusing allowed services is a common evasion technique",
+     "Only if unencrypted",
+     "Never"
+    ],
+    "c": 1,
+    "why": "Blending into permitted destinations defeats naive allowlisting."
+   },
+   {
+    "q": "Which interval pattern is most suspicious?",
+    "a": [
+     "Random intervals throughout the day",
+     "Exactly 300 seconds every time, day and night",
+     "Bursty during work hours",
+     "No traffic at night"
+    ],
+    "c": 1,
+    "why": "Machine-precise regularity around the clock implies automation, not a human."
+   },
+   {
+    "q": "A host makes DNS queries where the subdomain is a base64-encoded blob that changes each time, to the same domain. Assessment?",
+    "a": [
+     "Normal",
+     "DNS covert channel exfiltrating data",
+     "Malformed query",
+     "A resolver issue"
+    ],
+    "c": 1,
+    "why": "High-entropy changing subdomains encode data in query names."
+   },
+   {
+    "q": "Why does jitter reduce detection chance?",
+    "a": [
+     "It encrypts traffic",
+     "It breaks the exact regularity detectors rely on",
+     "It changes ports",
+     "It speeds transfers"
+    ],
+    "c": 1,
+    "why": "Jitter makes interval analysis harder, though volume still betrays it."
+   }
+  ]
+ },
+ "game-exploit-chain": {
+  "kind": "builder",
+  "intro": "Sequence the steps from port scan to shell.",
+  "challenges": [
+   {
+    "q": "Order a basic exploitation chain.",
+    "items": [
+     "Port scan the target",
+     "Identify service versions",
+     "Find a matching public exploit",
+     "Configure and launch the exploit",
+     "Catch the reverse shell",
+     "Upgrade the shell to a TTY"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "why": "Reconnaissance, identification, research, exploit, catch, then make it usable."
+   },
+   {
+    "q": "Order the post-exploitation steps immediately after landing on Linux.",
+    "items": [
+     "Stabilise the shell",
+     "Enumerate the host and current privileges",
+     "Look for escalation paths",
+     "Escalate to root",
+     "Establish persistence if authorised",
+     "Exfiltrate or pivot per objectives"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "why": "Stabilise first so everything else works, then enumerate before acting."
+   },
+   {
+    "q": "Order these by whether they run before or after gaining a foothold: least privilege needed first.",
+    "items": [
+     "Reading public certificate transparency logs",
+     "Requesting a service ticket for a SPN as a domain user",
+     "Running a kernel exploit",
+     "DCSyncing the directory"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Passive reconnaissance needs nothing; a ticket needs any account; a kernel exploit needs local access; DCSync needs replication rights."
+   },
+   {
+    "q": "Order a web attack chain from discovery to impact.",
+    "items": [
+     "Discover the injection point",
+     "Confirm the vulnerability manually",
+     "Enumerate the database schema",
+     "Extract credentials",
+     "Reuse credentials to move laterally"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "why": "Confirm by hand before automating, then escalate impact from data to access."
+   },
+   {
+    "q": "Order the defence-evasion considerations by how much they reduce detection.",
+    "items": [
+     "Change file hashes",
+     "Use allowed protocols for C2",
+     "Blend timing to match normal traffic",
+     "Adopt attacker behaviour indistinguishable from legitimate admin activity"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Hash changes are trivial to detect through; behavioural mimicry is the hardest detection problem there is."
+   },
+   {
+    "q": "Order these Web vulnerabilities by typical time to weaponise, fastest first.",
+    "items": [
+     "Default credentials on an exposed admin panel",
+     "SQL injection on a login form",
+     "SSRF to cloud metadata",
+     "Chained privilege escalation via misconfigured AD"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Default credentials take minutes; AD chains take days of patient enumeration."
+   }
+  ]
+ },
+ "game-ids-triage": {
+  "kind": "quiz",
+  "intro": "Real attack or false positive? Decide and justify.",
+  "challenges": [
+   {
+    "q": "Alert: GET /?id=1 UNION SELECT 1,2,3 from an external IP. Assessment?",
+    "a": [
+     "False positive",
+     "Likely real injection attempt, high priority",
+     "Benign scanner",
+     "Normal traffic"
+    ],
+    "c": 1,
+    "why": "A UNION SELECT payload in a parameter is a deliberate injection attempt."
+   },
+   {
+    "q": "Alert: outbound SMB from a workstation to an internal file server during business hours. Assessment?",
+    "a": [
+     "Malicious",
+     "Likely normal file sharing",
+     "C2",
+     "Exfiltration"
+    ],
+    "c": 1,
+    "why": "Normal protocol, normal destination, normal time. The same event at 03:00 to an external host would be different."
+   },
+   {
+    "q": "Alert: a service account logs in at 03:12 from a country you do not operate in. Assessment?",
+    "a": [
+     "Normal",
+     "High priority, possible credential compromise",
+     "Maintenance",
+     "False positive"
+    ],
+    "c": 1,
+    "why": "A service account does not travel. This is a strong compromise indicator."
+   },
+   {
+    "q": "Alert: port scan from an internal vulnerability scanner IP that runs weekly. Assessment?",
+    "a": [
+     "Attack",
+     "Expected activity from a known scanner, low priority, but confirm schedules match",
+     "Incident",
+     "Exfiltration"
+    ],
+    "c": 1,
+    "why": "Known scanning infrastructure is expected, though you verify the schedule."
+   },
+   {
+    "q": "Alert: lsass process memory access by a non-security tool. Assessment?",
+    "a": [
+     "Benign",
+     "High priority, credential dumping",
+     "Update",
+     "Backup"
+    ],
+    "c": 1,
+    "why": "Reading lsass outside EDR or antivirus is credential theft."
+   },
+   {
+    "q": "Alert: many 404s to a nonsense path from one IP over ten minutes. Assessment?",
+    "a": [
+     "Attack, but low severity",
+     "Critical breach",
+     "Normal error",
+     "Exfiltration"
+    ],
+    "c": 0,
+    "why": "Likely directory brute forcing, which is an attempt rather than a breach."
+   },
+   {
+    "q": "Alert: a scheduled nightly PowerShell task that uploads a report to a vendor. Assessment?",
+    "a": [
+     "C2",
+     "Likely legitimate but worth verifying against approved change records",
+     "Ransomware",
+     "False positive always"
+    ],
+    "c": 1,
+    "why": "Legitimate scheduled automation looks identical to malicious automation, so you verify."
+   },
+   {
+    "q": "Alert: DNS TXT queries for long random subdomains, hundreds per minute, one host. Assessment?",
+    "a": [
+     "Normal",
+     "DNS tunnelling, high priority",
+     "Resolver issue",
+     "Benign"
+    ],
+    "c": 1,
+    "why": "High-volume high-entropy DNS to one domain is exfiltration."
+   }
+  ]
+ }
+}

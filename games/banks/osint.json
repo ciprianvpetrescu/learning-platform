@@ -1,0 +1,243 @@
+{
+ "game-osint-profile": {
+  "kind": "quiz",
+  "intro": "Scattered public data. What does it tell you?",
+  "challenges": [
+   {
+    "q": "A job advert asks for Kubernetes, Terraform and AWS EKS experience. What have you learned?",
+    "a": [
+     "Nothing useful",
+     "The cloud stack and likely the orchestration platform in use",
+     "Their passwords",
+     "Their office address"
+    ],
+    "c": 1,
+    "why": "Recruitment posts describe the technology stack in detail."
+   },
+   {
+    "q": "certificate transparency logs show admin-staging.internal.example.com. What does this give you?",
+    "a": [
+     "Nothing",
+     "A hostname that may never have appeared in public DNS",
+     "A password",
+     "Their source code"
+    ],
+    "c": 1,
+    "why": "CT logs are public by design and leak internal-sounding hostnames."
+   },
+   {
+    "q": "A company PDF has Author: jsmith and Producer: Microsoft Word 2010. What have you learned?",
+    "a": [
+     "Nothing",
+     "A likely username and an end of life software version",
+     "Their revenue",
+     "Their network layout"
+    ],
+    "c": 1,
+    "why": "Document metadata names authors and the software that made it."
+   },
+   {
+    "q": "A GitHub repository has an old commit containing AWS credentials. Is this in scope of a finding?",
+    "a": [
+     "No, it is public",
+     "Yes, exposed credentials in public repos are a serious finding",
+     "Only if still valid",
+     "Only on private repos"
+    ],
+    "c": 1,
+    "why": "Publicly exposed credentials are a real, and common, exposure."
+   },
+   {
+    "q": "An employee posts a photo from the office with a badge visible. What is the OSINT value?",
+    "a": [
+     "None",
+     "Badge design and physical access details, useful for social engineering",
+     "Their salary",
+     "Their code"
+    ],
+    "c": 1,
+    "why": "Physical and social details support other attack paths."
+   },
+   {
+    "q": "Shodan shows port 3389 open on the company perimeter. What is the concern?",
+    "a": [
+     "None",
+     "RDP exposed to the internet is a primary ransomware entry point",
+     "It is fast",
+     "It is encrypted"
+    ],
+    "c": 1,
+    "why": "Internet-facing RDP is a leading cause of ransomware incidents."
+   },
+   {
+    "q": "A conference talk by their lead engineer describes their architecture in detail. This is",
+    "a": [
+     "Irrelevant",
+     "Valuable passive intelligence about internal design",
+     "A leak requiring legal action",
+     "Useless"
+    ],
+    "c": 1,
+    "why": "Public technical talks frequently describe internals."
+   },
+   {
+    "q": "Whois shows a registration email of an unrelated personal address. What might this indicate?",
+    "a": [
+     "Nothing",
+     "Registration by an individual, possibly the original tech contact, useful for phishing or social engineering",
+     "A privacy proxy always",
+     "A registrar error"
+    ],
+    "c": 1,
+    "why": "Historical registration data often names the original technical contact."
+   }
+  ]
+ },
+ "game-vhost-hunt": {
+  "kind": "input",
+  "intro": "Which Host header reveals the hidden site?",
+  "challenges": [
+   {
+    "q": "The default site returns a generic placeholder. Fuzzing Host headers, you see a different page for one value. Give the standard first guess.",
+    "answers": [
+     "localhost",
+     "127.0.0.1"
+    ],
+    "hint": "The most common vhost"
+   },
+   {
+    "q": "The main site is example.com. Give a likely admin vhost name.",
+    "answers": [
+     "admin.example.com",
+     "admin",
+     "admin.local"
+    ],
+    "hint": "Administration"
+   },
+   {
+    "q": "Give a likely internal or development vhost name for example.com.",
+    "answers": [
+     "dev.example.com",
+     "staging.example.com",
+     "internal.example.com",
+     "dev",
+     "staging"
+    ],
+    "hint": "Environments"
+   },
+   {
+    "q": "A different response appears when the Host header has no valid virtual host. What does that tell you?",
+    "answers": [
+     "virtual hosts exist",
+     "vhosts exist",
+     "vhosts are configured",
+     "there are vhosts"
+    ],
+    "hint": "Difference in response means routing exists"
+   },
+   {
+    "q": "Which status code most strongly suggests a vhost exists but is forbidden?",
+    "answers": [
+     "403",
+     "403 forbidden"
+    ],
+    "hint": "You are recognised but refused"
+   },
+   {
+    "q": "You must enumerate many vhost names quickly. What kind of file drives the fuzzing?",
+    "answers": [
+     "wordlist",
+     "a wordlist",
+     "dictionary"
+    ],
+    "hint": "A list of words"
+   }
+  ]
+ },
+ "game-attack-surface": {
+  "kind": "builder",
+  "intro": "Rank the findings by real-world risk. Most severe first.",
+  "challenges": [
+   {
+    "q": "Order these by risk, highest first.",
+    "items": [
+     "Unauthenticated RCE on an internet-facing service",
+     "SQL injection on a public login form",
+     "Stored XSS in an authenticated admin panel",
+     "Verbose error messages revealing the framework"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Un authenticated remote code execution on the perimeter is the worst case: no credentials, no user interaction, full control."
+   },
+   {
+    "q": "Order these by risk, highest first.",
+    "items": [
+     "Hardcoded cloud credentials in a public repository",
+     "Weak password policy with no lockout",
+     "Missing security headers",
+     "Server banner disclosure"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Live credentials in public code grant immediate access, whereas the others raise risk without granting it."
+   },
+   {
+    "q": "Order these by risk, highest first.",
+    "items": [
+     "Exposed Docker socket reachable from the internet",
+     "Open SMB with guest access",
+     "Public S3 bucket listing internal documents",
+     "Unpatched CMS with a public exploit but no known usage"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "The Docker socket is immediate host compromise; guest SMB and public buckets follow; an unconfirmed exploit is lowest."
+   },
+   {
+    "q": "Order the reconnaissance steps from least to most likely to touch the target.",
+    "items": [
+     "Reading certificate transparency logs",
+     "Querying passive DNS history",
+     "Resolving a wordlist of subdomains",
+     "Port scanning with service detection"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "CT and passive DNS use third parties; resolution touches DNS; scanning makes direct contact."
+   },
+   {
+    "q": "Order the response priority in the first hour of an incident.",
+    "items": [
+     "Determine scope and whether the attack is ongoing",
+     "Contain affected systems without destroying evidence",
+     "Eradicate the persistence mechanism",
+     "Notify stakeholders and regulators as required"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Scope first, then contain, then remove persistence, then communicate. Communicating before you know scope produces inaccurate statements."
+   }
+  ]
+ }
+}

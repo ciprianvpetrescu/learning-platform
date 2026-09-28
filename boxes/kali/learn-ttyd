@@ -1,0 +1,7 @@
+#!/bin/bash
+# Browser terminal front door. Theme + font live here so the spawner never has
+# to pass quoted JSON on the command line (bash used to echo it on startup).
+exec ttyd -p 7681 -W \
+  -t fontSize=14 \
+  -t 'theme={"background":"#0d1117","foreground":"#c9d1d9"}' \
+  bash

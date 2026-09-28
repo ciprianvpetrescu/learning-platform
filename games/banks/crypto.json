@@ -1,0 +1,222 @@
+{
+ "game-caesar-crack": {
+  "kind": "input",
+  "intro": "Recover the plaintext. Single words or short phrases, lowercase accepted.",
+  "challenges": [
+   {
+    "q": "Ciphertext: KHOOR. Shift 3. Plaintext?",
+    "answers": [
+     "hello"
+    ],
+    "hint": "Three back"
+   },
+   {
+    "q": "Ciphertext: WKLV LV D WHVW. Shift 3. Plaintext?",
+    "answers": [
+     "this is a test",
+     "this is a test."
+    ],
+    "hint": "Same shift, whole sentence"
+   },
+   {
+    "q": "Ciphertext: URYQB. Shift 13 (ROT13). Plaintext?",
+    "answers": [
+     "heldo",
+     "helro",
+     "helo"
+    ],
+    "hint": "ROT13 is its own inverse"
+   },
+   {
+    "q": "If UIF is THE, what is the shift?",
+    "answers": [
+     "1",
+     "one",
+     "shift 1"
+    ],
+    "hint": "Compare the first letters"
+   },
+   {
+    "q": "A Caesar bruteforce gives 25 candidates. How many keys does a general monoalphabetic substitution have (order of magnitude, one word: thousands/millions/trillions)?",
+    "answers": [
+     "trillions",
+     "26 factorial",
+     "4e26",
+     "millions"
+    ],
+    "hint": "26 factorial"
+   },
+   {
+    "q": "Ciphertext: BQQMF, Shift 1. Plaintext?",
+    "answers": [
+     "apple"
+    ],
+    "hint": "One back"
+   }
+  ]
+ },
+ "game-vigenere-break": {
+  "kind": "input",
+  "intro": "Find the key, then the message. Real cryptanalysis, simplified.",
+  "challenges": [
+   {
+    "q": "Key is ABC (shifts 0,1,2 repeating) - effectively shift 1,2,3,1,2,3. Ciphertext BDG. Plaintext?",
+    "answers": [
+     "ace"
+    ],
+    "hint": "Subtract 1, 2, 3"
+   },
+   {
+    "q": "A repeated ciphertext sequence appears at positions 0 and 12. What is the most likely key length (a divisor of 12, smallest sensible answer)?",
+    "answers": [
+     "4",
+     "3",
+     "6",
+     "12",
+     "2"
+    ],
+    "hint": "Distances between repeats are multiples of the key length"
+   },
+   {
+    "q": "If the key length is 5, how many independent Caesar ciphers must be solved?",
+    "answers": [
+     "5",
+     "five"
+    ],
+    "hint": "One per key position"
+   },
+   {
+    "q": "Key is LEMON. Ciphertext LX FOPV. What is the first plaintext word? (Shift L is 11 back from first letter)",
+    "answers": [
+     "we",
+     "we "
+    ],
+    "hint": "Subtract L from L to get W... try it"
+   },
+   {
+    "q": "Vigenere with a key as long as the message and truly random is called a one-time pad. Its weakness is",
+    "answers": [
+     "key reuse",
+     "reuse",
+     "key reuse",
+     "reused key"
+    ],
+    "hint": "What breaks a perfect cipher?"
+   }
+  ]
+ },
+ "game-hash-crack": {
+  "kind": "input",
+  "intro": "Identify the algorithm or recover the password.",
+  "challenges": [
+   {
+    "q": "Hash: 5f4dcc3b5aa765d61d8327deb882cf99. This is MD5 of a very common password. What is it?",
+    "answers": [
+     "password"
+    ],
+    "hint": "The most used password in every breach"
+   },
+   {
+    "q": "32 hex characters indicates which algorithm?",
+    "answers": [
+     "md5"
+    ],
+    "hint": "128 bits"
+   },
+   {
+    "q": "40 hex characters indicates which algorithm?",
+    "answers": [
+     "sha1",
+     "sha-1"
+    ],
+    "hint": "160 bits"
+   },
+   {
+    "q": "A hash starting with the prefix two-a-y is which algorithm?",
+    "answers": [
+     "bcrypt",
+     "2a",
+     "bcrypt 2a"
+    ],
+    "hint": "Designed for passwords"
+   },
+   {
+    "q": "Hash: 21232f297a57a5a743894a0e4a801fc3 (MD5). Recover it.",
+    "answers": [
+     "admin"
+    ],
+    "hint": "A default credential"
+   },
+   {
+    "q": "A password hash is identical across two different users. What was omitted?",
+    "answers": [
+     "salt",
+     "a salt",
+     "salting"
+    ],
+    "hint": "The defence against identical hashes"
+   },
+   {
+    "q": "Hash: 8d788385431273d11e8b43bb78f3aa41 (MD5). Recover it.",
+    "answers": [
+     "secret"
+    ],
+    "hint": "A very common word"
+   },
+   {
+    "q": "e10adc3949ba59abbe56e057f20f883e (MD5). Recover it.",
+    "answers": [
+     "123456"
+    ],
+    "hint": "Numeric, six digits"
+   }
+  ]
+ },
+ "game-rsa-recover": {
+  "kind": "input",
+  "intro": "Classic RSA breaks. Give the factor or the recovered value.",
+  "challenges": [
+   {
+    "q": "n = 3233, e = 17. Factor n (give the two primes, smaller first).",
+    "answers": [
+     "61 53",
+     "61, 53",
+     "61 and 53",
+     "61"
+    ],
+    "hint": "61 times 53"
+   },
+   {
+    "q": "Given p=61, q=53, what is phi(n)?",
+    "answers": [
+     "3120"
+    ],
+    "hint": "(p-1)(q-1)"
+   },
+   {
+    "q": "Two moduli n1 = 3233 and n2 = 3599 share a prime factor. What is it? (Compute gcd)",
+    "answers": [
+     "61"
+    ],
+    "hint": "gcd is the shared factor"
+   },
+   {
+    "q": "A 512-bit RSA modulus is encountered. Is this acceptable today? yes or no",
+    "answers": [
+     "no",
+     "n"
+    ],
+    "hint": "Modern minimum is 2048 bits"
+   },
+   {
+    "q": "Textbook RSA with e=3 and a very small message m where m cubed is less than n. What operation recovers m?",
+    "answers": [
+     "cube root",
+     "take the cube root",
+     "integer cube root"
+    ],
+    "hint": "No modular reduction occurred"
+   }
+  ]
+ }
+}

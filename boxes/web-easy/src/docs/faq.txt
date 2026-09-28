@@ -1,0 +1,5 @@
+FAQ
+Q: Where are contracts stored?
+A: /var/www/private/contracts/
+Q: Who can access them?
+A: Admin staff only.

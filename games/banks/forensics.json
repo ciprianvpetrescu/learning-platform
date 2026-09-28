@@ -1,0 +1,289 @@
+{
+ "game-file-carve": {
+  "kind": "input",
+  "intro": "You have a raw disk blob. Identify what is hidden.",
+  "challenges": [
+   {
+    "q": "The blob begins with the bytes FF D8 FF E0 00 10 4A 46 49 46. What file type?",
+    "answers": [
+     "jpeg",
+     "jpg",
+     "jpeg image"
+    ],
+    "hint": "Camera image format"
+   },
+   {
+    "q": "The blob begins with 89 50 4E 47 0D 0A 1A 0A. What file type?",
+    "answers": [
+     "png",
+     "png image"
+    ],
+    "hint": "Portable network graphic"
+   },
+   {
+    "q": "You find 50 4B 03 04 in the middle of a file that is otherwise a JPEG. What is appended?",
+    "answers": [
+     "zip",
+     "a zip",
+     "zip archive"
+    ],
+    "hint": "PK header"
+   },
+   {
+    "q": "A file contains 25 50 44 46 at the start. What is it?",
+    "answers": [
+     "pdf",
+     "pdf document"
+    ],
+    "hint": "Portable document format"
+   },
+   {
+    "q": "A file ends with FF D9. What format, and what does that sequence mean?",
+    "answers": [
+     "jpeg",
+     "jpg",
+     "end of image",
+     "jpeg end of image"
+    ],
+    "hint": "Image footer"
+   },
+   {
+    "q": "You need to carve fragmented files from unallocated space. Name a tool.",
+    "answers": [
+     "scalpel",
+     "foremost",
+     "photorec",
+     "binwalk"
+    ],
+    "hint": "Ancient surgical instrument, or a photo recovery tool"
+   }
+  ]
+ },
+ "game-stego-hunt": {
+  "kind": "input",
+  "intro": "The data is hidden in the carrier. Find it.",
+  "challenges": [
+   {
+    "q": "An image is much larger in bytes than its dimensions suggest. What do you check first?",
+    "answers": [
+     "appended data",
+     "trailing data",
+     "metadata",
+     "exif"
+    ],
+    "hint": "Look at the end of the file"
+   },
+   {
+    "q": "Which exiftool field would most directly reveal where a photo was taken?",
+    "answers": [
+     "gps",
+     "gpsposition",
+     "gps position"
+    ],
+    "hint": "Location data"
+   },
+   {
+    "q": "A payload is hidden in the lowest bit of each colour value. What is this technique called?",
+    "answers": [
+     "lsb",
+     "least significant bit",
+     "lsb steganography"
+    ],
+    "hint": "The last bit"
+   },
+   {
+    "q": "You need to view individual bit planes of an image. Name a tool.",
+    "answers": [
+     "stegsolve",
+     "zsteg",
+     "stegseek"
+    ],
+    "hint": "Solves stego"
+   },
+   {
+    "q": "Audio contains hidden text visible when you plot the frequency spectrum. What is that plot called?",
+    "answers": [
+     "spectrogram",
+     "spectrum",
+     "sonogram"
+    ],
+    "hint": "Sound picture"
+   },
+   {
+    "q": "A ZIP is appended to a JPEG. What is such a file called?",
+    "answers": [
+     "polyglot",
+     "polyglot file",
+     "a polyglot"
+    ],
+    "hint": "Speaks two languages"
+   }
+  ]
+ },
+ "game-evidence-order": {
+  "kind": "builder",
+  "intro": "Order the collection steps correctly.",
+  "challenges": [
+   {
+    "q": "Order these by volatility, most volatile first.",
+    "items": [
+     "CPU registers and cache",
+     "RAM contents",
+     "Network connections and running process table",
+     "Disk contents",
+     "Archived backups and printed logs"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "why": "Registers vanish fastest, then memory, then network state, then disk, then archives."
+   },
+   {
+    "q": "Order the acquisition workflow for a suspect laptop.",
+    "items": [
+     "Photograph the scene and note the state",
+     "Capture memory if the machine is running",
+     "Hash the source drive",
+     "Image the drive with a write blocker",
+     "Hash the image and verify it matches"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3,
+     4
+    ],
+    "why": "Document, capture volatile data, prove the source, acquire, prove the copy."
+   },
+   {
+    "q": "Order the incident response phases.",
+    "items": [
+     "Preparation",
+     "Identification",
+     "Containment",
+     "Eradication",
+     "Recovery",
+     "Lessons learned"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "why": "The standard cycle, and preparation is what makes the rest possible."
+   },
+   {
+    "q": "Order these file system sources by how quickly they lose value after an incident.",
+    "items": [
+     "Open file handles and process memory",
+     "Live system logs in journald",
+     "Rotated and compressed log archives",
+     "Disk blocks in unallocated space"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Open handles die with the process, live logs rotate, archives persist, unallocated space lasts longest."
+   },
+   {
+    "q": "Order the steps to hash-verify evidence properly.",
+    "items": [
+     "Hash the original media",
+     "Create the forensic image",
+     "Hash the image",
+     "Compare the two hashes"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "You prove the original, acquire, then prove the copy matches."
+   }
+  ]
+ },
+ "game-injected-process": {
+  "kind": "quiz",
+  "intro": "Given the listing, identify the anomaly.",
+  "challenges": [
+   {
+    "q": "Which process is suspicious?",
+    "a": [
+     "svchost.exe parent explorer.exe in System32",
+     "winword.exe parent winword.exe",
+     "lsass.exe parent services.exe",
+     "cmd.exe parent winword.exe, running from Temp"
+    ],
+    "c": 3,
+    "why": "A document reader spawning a shell is a classic macro malware pattern."
+   },
+   {
+    "q": "A process appears in psscan but not in pslist. Confidence?",
+    "a": [
+     "Normal",
+     "Almost certainly unlinked deliberately to hide from the process list",
+     "Paging artefact",
+     "Always benign"
+    ],
+    "c": 1,
+    "why": "Pool scanning finds structures the linked-list traversal no longer reaches, which indicates DKOM hiding."
+   },
+   {
+    "q": "Which is the strongest indicator of injection?",
+    "a": [
+     "High CPU",
+     "A private memory region marked executable and containing a PE header",
+     "Many threads",
+     "Large working set"
+    ],
+    "c": 1,
+    "why": "Executable private memory with PE structure means code was mapped in rather than loaded from disk."
+   },
+   {
+    "q": "sshd has three established outbound connections to port 443 on unrelated hosts. Assessment?",
+    "a": [
+     "Normal",
+     "Anomalous, possible C2 from a hijacked service process",
+     "Update check",
+     "Backup"
+    ],
+    "c": 1,
+    "why": "A service with no reason to make outbound web connections doing so is a beacon."
+   },
+   {
+    "q": "netscan shows a listening port on a host with no corresponding service. Meaning?",
+    "a": [
+     "Nothing",
+     "A hidden or injected listener that no service owns",
+     "Firewall",
+     "Port forward"
+    ],
+    "c": 1,
+    "why": "A socket with no owning service suggests a backdoor."
+   },
+   {
+    "q": "A process has a parent PID that no longer exists and is running from /tmp. Assessment?",
+    "a": [
+     "Normal churn",
+     "Orphaned or deliberately re-parented, worth investigating",
+     "Always benign",
+     "Kernel thread"
+    ],
+    "c": 1,
+    "why": "An orphan in a temp path is a common persistence pattern."
+   }
+  ]
+ }
+}

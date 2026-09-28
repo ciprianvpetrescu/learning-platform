@@ -1,0 +1,171 @@
+{
+ "game-ad-path": {
+  "kind": "builder",
+  "intro": "BloodHound output is on the table. Find the path.",
+  "challenges": [
+   {
+    "q": "You have a domain user. Kerberoastable service account runs as a service with local admin on a server. Order the chain.",
+    "items": [
+     "Request a service ticket for the SPN as any domain user",
+     "Crack the ticket offline to recover the service account password",
+     "Use the account to access the server where it is local admin",
+     "Enumerate sessions to find a domain admin and harvest a ticket"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Kerberoast, crack, use local admin, then hunt for higher-value sessions."
+   },
+   {
+    "q": "The service account has unconstrained delegation and a domain admin occasionally authenticates to it. Order the exploitation.",
+    "items": [
+     "Compromise the delegation-enabled host",
+     "Wait for or force a privileged authentication to it",
+     "Extract the cached ticket-granting ticket from memory",
+     "Use the ticket to impersonate the domain admin"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Unconstrained delegation caches tickets for anyone who authenticates, which is the whole attack."
+   },
+   {
+    "q": "You find GenericAll on a user object and GenericWrite on a group. Which step reaches privilege?",
+    "items": [
+     "Set a Service Principal Name on the user then Kerberoast and crack it, or add yourself to the group",
+     "Delete the group",
+     "Rename the user",
+     "Reset the computer account"
+    ],
+    "correct": 0,
+    "why": "Targeted Kerberoasting via SPN write, or direct group membership, both escalate."
+   },
+   {
+    "q": "Which account hash is required for a golden ticket?",
+    "items": [
+     "Any domain admin",
+     "The krbtgt account hash",
+     "A service account hash",
+     "The domain SID only"
+    ],
+    "correct": 1,
+    "why": "krbtgt signs ticket-granting tickets, so its key forges tickets for anything."
+   },
+   {
+    "q": "Order the steps of a DCSync attack.",
+    "items": [
+     "Obtain an account with directory replication rights",
+     "Impersonate a domain controller to the target DC",
+     "Request replication of account secrets",
+     "Recover the krbtgt hash and forge tickets"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Replication rights then the replication protocol yields hashes without touching the DC directly."
+   },
+   {
+    "q": "What is the single most effective structural defence in AD?",
+    "items": [
+     "Tiered administration with separate privileged accounts and restricted logon rights",
+     "Longer passwords",
+     "More domain controllers",
+     "Disabling Kerberos"
+    ],
+    "correct": 0,
+    "why": "Tiering prevents the credential reuse that makes most AD chains work."
+   }
+  ]
+ },
+ "game-kerberos-flow": {
+  "kind": "builder",
+  "intro": "Assemble the ticket exchange and name the abuse.",
+  "challenges": [
+   {
+    "q": "Order a normal Kerberos authentication for a file share.",
+    "items": [
+     "Client authenticates to the KDC and receives a TGT",
+     "Client requests a service ticket for the file server SPN",
+     "KDC returns a service ticket encrypted with the service account key",
+     "Client presents the service ticket to the file server"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "TGT first, then service tickets per resource, presented to the resource."
+   },
+   {
+    "q": "What exactly is cracked in Kerberoasting?",
+    "items": [
+     "The TGT",
+     "The service ticket, which is encrypted with the service account password key",
+     "The session key",
+     "The domain SID"
+    ],
+    "correct": 1,
+    "why": "The service ticket is encrypted with a key derived from the service account password, so it is an offline crack target."
+   },
+   {
+    "q": "What must be true for ASREP roasting to work?",
+    "items": [
+     "Kerberos must be disabled",
+     "The account must have pre-authentication disabled",
+     "The password must be strong",
+     "SMB signing must be off"
+    ],
+    "correct": 1,
+    "why": "Without pre-auth, the KDC returns a crackable response to anyone who asks."
+   },
+   {
+    "q": "Order an attack using resource-based constrained delegation.",
+    "items": [
+     "Find an object you can write msDS-AllowedToActOnBehalfOfOtherIdentity on",
+     "Place a computer account you control in that attribute",
+     "Use S4U2Self and S4U2Proxy to obtain a service ticket as a privileged user",
+     "Access the target service as that user"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Writing the delegation attribute grants your controlled principal the right to impersonate."
+   },
+   {
+    "q": "Why does disabling pre-auth only on one account create risk?",
+    "items": [
+     "It slows the KDC",
+     "That account becomes remotely roastable with no credentials required",
+     "It breaks DNS",
+     "It needs a reboot"
+    ],
+    "correct": 1,
+    "why": "Anyone who can reach the KDC can request a crackable response for that account."
+   },
+   {
+    "q": "A silver ticket forges a service ticket. What is required?",
+    "items": [
+     "The krbtgt hash",
+     "The target service account hash and its SID",
+     "The domain admin password",
+     "Physical access"
+    ],
+    "correct": 1,
+    "why": "Service tickets are signed with the service account key, so that key alone forges them for that service."
+   }
+  ]
+ }
+}

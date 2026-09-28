@@ -1,0 +1,255 @@
+{
+ "game-container-config": {
+  "kind": "quiz",
+  "intro": "Spot the fatal line in each configuration.",
+  "challenges": [
+   {
+    "q": "docker run -v /var/run/docker.sock:/var/run/docker.sock image. Why fatal?",
+    "a": [
+     "Slow",
+     "The Docker API lets you start a container mounting the host filesystem",
+     "Uses memory",
+     "Blocks networking"
+    ],
+    "c": 1,
+    "why": "Full API access is effectively root on the host."
+   },
+   {
+    "q": "privileged: true in a compose file. Impact?",
+    "a": [
+     "None",
+     "All capabilities and device access, isolation effectively disabled",
+     "Faster",
+     "More storage"
+    ],
+    "c": 1,
+    "why": "Privileged removes essentially every containment boundary."
+   },
+   {
+    "q": "Image runs as root inside the container and mounts the host /etc. Impact?",
+    "a": [
+     "None",
+     "Writable host files, direct path to host compromise",
+     "Slower",
+     "No impact"
+    ],
+    "c": 1,
+    "why": "Host mounts plus root inside is a documented escape path."
+   },
+   {
+    "q": "Which is the strongest hardening step for a web container?",
+    "a": [
+     "Privileged mode",
+     "Non-root user, dropped capabilities, read-only root filesystem",
+     "Mount the socket",
+     "Larger base image"
+    ],
+    "c": 1,
+    "why": "Least privilege inside limits what any escape is worth."
+   },
+   {
+    "q": "A container holds CAP_SYS_ADMIN. Why concerning?",
+    "a": [
+     "Nothing",
+     "It permits mounting filesystems and many privileged operations",
+     "Only a performance cost",
+     "It is the default"
+    ],
+    "c": 1,
+    "why": "CAP_SYS_ADMIN is a very broad capability and a common escape ingredient."
+   },
+   {
+    "q": "Kubernetes secret is stored in a Secret object. Is it encrypted by default?",
+    "a": [
+     "Yes",
+     "No, base64-encoded unless encryption at rest is explicitly configured",
+     "Always encrypted",
+     "Depends on the pod"
+    ],
+    "c": 1,
+    "why": "Base64 is encoding, and RBAC is the only barrier by default."
+   },
+   {
+    "q": "Which Kubernetes permission most directly enables host compromise?",
+    "a": [
+     "get pods",
+     "create pods",
+     "list namespaces",
+     "read logs"
+    ],
+    "c": 1,
+    "why": "Creating a pod allows mounting host paths, privileged mode or host networking."
+   },
+   {
+    "q": "A pod mounts the hostPath / . Impact?",
+    "a": [
+     "None",
+     "Direct access to the host filesystem, which is a full escape",
+     "Faster IO",
+     "More storage"
+    ],
+    "c": 1,
+    "why": "The host root inside a container is compromise in one step."
+   }
+  ]
+ },
+ "game-rbac-path": {
+  "kind": "builder",
+  "intro": "From this service account, reach cluster admin. Sequence the steps.",
+  "challenges": [
+   {
+    "q": "Order an RBAC escalation chain given create pods permission.",
+    "items": [
+     "Read the service account token from the mounted path",
+     "Enumerate what the token can do with can-i",
+     "Create a pod that mounts the host filesystem",
+     "Read or modify the host to escalate"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Token, enumerate, abuse the strongest permission, then escalate on the host."
+   },
+   {
+    "q": "You have get and list on secrets in one namespace, and a pod there uses a privileged service account. Order the chain.",
+    "items": [
+     "Read secrets in the namespace",
+     "Find a token or credential for a more privileged identity",
+     "Use it to enumerate further permissions",
+     "Reach cluster-admin or the host"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "Secret access yields credentials, which yield permissions, which yield escalation."
+   },
+   {
+    "q": "Which single permission is most dangerous?",
+    "items": [
+     "create rolebindings",
+     "get configmaps",
+     "list events",
+     "read pod logs"
+    ],
+    "correct": 0,
+    "why": "Creating a role binding lets you grant yourself any role, including cluster-admin."
+   },
+   {
+    "q": "Order the cloud chain from a vulnerable web app to cloud credentials.",
+    "items": [
+     "Exploit SSRF in the web application",
+     "Reach the instance metadata endpoint",
+     "Retrieve temporary role credentials",
+     "Call the cloud API as the instance role"
+    ],
+    "order": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "why": "SSRF to metadata to temporary credentials to cloud API is the standard cloud pivot."
+   },
+   {
+    "q": "Which is the correct first hardening step for a cluster?",
+    "items": [
+     "Disable anonymous authentication and audit RBAC bindings",
+     "Install a WAF",
+     "Enable more logging only",
+     "Add more nodes"
+    ],
+    "correct": 0,
+    "why": "Un authenticated API access and over-broad bindings are the root of most cluster compromise."
+   }
+  ]
+ },
+ "game-iam-escalate": {
+  "kind": "quiz",
+  "intro": "Given the policy set, find the permission that grants more.",
+  "challenges": [
+   {
+    "q": "Policy grants iam:CreateAccessKey on *. What does this enable?",
+    "a": [
+     "Nothing",
+     "Creating a permanent credential for any user, including admins",
+     "Read only",
+     "Billing only"
+    ],
+    "c": 1,
+    "why": "Creating an access key for a privileged identity is direct escalation."
+   },
+   {
+    "q": "Policy grants iam:PassRole and lambda:CreateFunction. Impact?",
+    "a": [
+     "None",
+     "Create a function running as a powerful role and invoke it",
+     "Read only",
+     "Monitoring only"
+    ],
+    "c": 1,
+    "why": "PassRole plus compute creation is a well-known escalation pair."
+   },
+   {
+    "q": "Policy grants s3:* on *. Worst case?",
+    "a": [
+     "Read objects",
+     "Full control of every bucket including deletion and policy changes",
+     "List only",
+     "None"
+    ],
+    "c": 1,
+    "why": "Wildcard action on wildcard resource is all buckets."
+   },
+   {
+    "q": "Policy grants sts:AssumeRole on *. Impact?",
+    "a": [
+     "None",
+     "Assume any role in the account, potentially administrator",
+     "Read only",
+     "Logging"
+    ],
+    "c": 1,
+    "why": "Unrestricted role assumption reaches whatever the most privileged role can do."
+   },
+   {
+    "q": "Which is a safer pattern than a long-lived access key?",
+    "a": [
+     "Role with temporary credentials",
+     "Sharing the key",
+     "Storing it in the repo encrypted",
+     "Emailing it"
+    ],
+    "c": 0,
+    "why": "Temporary credentials bound exposure in time."
+   },
+   {
+    "q": "What is the primary defence against credential exposure in cloud?",
+    "a": [
+     "Networking rules",
+     "Least privilege roles with short-lived credentials and monitoring of identity events",
+     "Bigger instances",
+     "WAF"
+    ],
+    "c": 1,
+    "why": "Identity is the perimeter, so identity controls and monitoring are the defence."
+   },
+   {
+    "q": "An instance metadata endpoint returns credentials without a token header. Why is this dangerous?",
+    "a": [
+     "Slow",
+     "Any SSRF can retrieve cloud credentials directly",
+     "Encrypted",
+     "Normal"
+    ],
+    "c": 1,
+    "why": "It converts a web bug into a cloud account compromise."
+   }
+  ]
+ }
+}

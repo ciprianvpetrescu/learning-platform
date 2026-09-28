@@ -1,0 +1,3 @@
+Acceptable Use Policy
+1. Do not use production credentials in development.
+2. Report vulnerabilities to security@vantage.example.

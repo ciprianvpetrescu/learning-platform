@@ -1,0 +1,212 @@
+{
+ "game-alert-triage": {
+  "kind": "quiz",
+  "intro": "Twenty minutes, a queue of alerts. Prioritise correctly.",
+  "challenges": [
+   {
+    "q": "Alert 1: unauthenticated RCE attempt against an internet-facing server, request seen. Priority?",
+    "a": [
+     "Low",
+     "Critical, immediate investigation",
+     "Informational",
+     "Ignore as scanner noise"
+    ],
+    "c": 1,
+    "why": "Unauthenticated remote code execution on the perimeter is the highest severity class."
+   },
+   {
+    "q": "Alert 2: a user clicked a link in a phishing email but the page failed to load. Priority?",
+    "a": [
+     "Critical",
+     "Medium, verify no credentials were entered",
+     "Low",
+     "Ignore"
+    ],
+    "c": 1,
+    "why": "No successful compromise, but verify credential entry and educate."
+   },
+   {
+    "q": "Alert 3: a security header is missing on a marketing site. Priority?",
+    "a": [
+     "Critical",
+     "Low, batch into remediation",
+     "Immediate escalation",
+     "Incident"
+    ],
+    "c": 1,
+    "why": "It is a hardening gap, not an active threat."
+   },
+   {
+    "q": "Alert 4: impossible travel for a privileged account. Priority?",
+    "a": [
+     "Low",
+     "High, likely credential compromise, revoke sessions and reset",
+     "Informational",
+     "Ignore"
+    ],
+    "c": 1,
+    "why": "Impossible travel on a privileged account means assume the credential is stolen."
+   },
+   {
+    "q": "Alert 5: a vulnerability scanner that runs weekly scanned an internal subnet. Priority?",
+    "a": [
+     "Critical",
+     "Expected activity, close after confirming the schedule",
+     "High",
+     "Medium"
+    ],
+    "c": 1,
+    "why": "Known, scheduled, expected activity. Verify and close."
+   },
+   {
+    "q": "Alert 6: an EDR alert shows lsass memory access by a newly installed tool. Priority?",
+    "a": [
+     "Low",
+     "High, possible credential dumping",
+     "Informational",
+     "Ignore"
+    ],
+    "c": 1,
+    "why": "Reading lsass outside known security tooling is credential theft."
+   },
+   {
+    "q": "Alert 7: ninety gigabytes outbound to a consumer file-sharing domain from a finance workstation at 02:00. Priority?",
+    "a": [
+     "Low",
+     "Critical, likely exfiltration",
+     "Medium",
+     "Normal backup"
+    ],
+    "c": 1,
+    "why": "Volume, destination, data sensitivity and hour all point at exfiltration."
+   },
+   {
+    "q": "Alert 8: a user installed an unapproved browser extension. Priority?",
+    "a": [
+     "Critical",
+     "Low to medium, policy matter",
+     "Incident",
+     "Ignore completely"
+    ],
+    "c": 1,
+    "why": "Policy violation, worth handling, but not an active compromise."
+   },
+   {
+    "q": "Alert 9: a new domain administrator account was created outside change control. Priority?",
+    "a": [
+     "Low",
+     "Critical, possible attacker persistence",
+     "Informational",
+     "Ignore"
+    ],
+    "c": 1,
+    "why": "New privileged accounts outside process are a classic persistence step."
+   },
+   {
+    "q": "Alert 10: failed logins for one user from one IP, five attempts, then success. Priority?",
+    "a": [
+     "Ignore",
+     "High, likely brute force success, reset and investigate the session",
+     "Low",
+     "Informational"
+    ],
+    "c": 1,
+    "why": "A small burst followed by success is a successful guess."
+   }
+  ]
+ },
+ "game-incident-room": {
+  "kind": "builder",
+  "intro": "You are the incident commander. Choose the correct next action.",
+  "challenges": [
+   {
+    "q": "Ransomware is actively encrypting file servers. Choose the immediate next action.",
+    "items": [
+     "Isolate affected segments from the network now",
+     "Begin a full disk forensic acquisition of every host",
+     "Email all staff to power down",
+     "Wait for the encryption to finish to preserve evidence"
+    ],
+    "correct": 0,
+    "why": "Containment first: stopping the spread outranks everything else. Acquisition happens after."
+   },
+   {
+    "q": "You have contained the spread. What comes next?",
+    "items": [
+     "Determine the entry point and check for other compromised systems",
+     "Immediately rebuild everything",
+     "Notify the press",
+     "Delete the malware and declare victory"
+    ],
+    "correct": 0,
+    "why": "You cannot eradicate what you do not understand, and attackers rarely use one host only."
+   },
+   {
+    "q": "You find the entry point was a phishing credential. Which action protects most?",
+    "items": [
+     "Reset the affected credential and all sessions",
+     "Delete the phishing email from all mailboxes",
+     "Block the sender domain",
+     "Warn staff"
+    ],
+    "correct": 0,
+    "why": "Revoking credentials and sessions removes the attacker access. The others reduce recurrence but do not remove access."
+   },
+   {
+    "q": "Legal counsel asks whether notification is required. What do you provide?",
+    "items": [
+     "A factual determination of whether personal data was accessed and affected",
+     "Your opinion of the attacker motive",
+     "A guess at the number of records",
+     "Nothing until the investigation is complete"
+    ],
+    "correct": 0,
+    "why": "Notification hinges on data category and whether it was accessed, so that is what counsel needs."
+   },
+   {
+    "q": "A colleague asks whether to clean or rebuild an affected server. Best practice?",
+    "items": [
+     "Rebuild from a known-good image",
+     "Clean the malware and monitor",
+     "Restore from the most recent backup onto the same OS",
+     "Remove the offending process"
+    ],
+    "correct": 0,
+    "why": "You cannot prove a cleaned system is clean, especially with unknown persistence."
+   },
+   {
+    "q": "During recovery, what should you do first?",
+    "items": [
+     "Increase monitoring specifically for the attacker re-entry patterns",
+     "Announce the incident is resolved",
+     "Restore all data at once",
+     "Disable logging to reduce load"
+    ],
+    "correct": 0,
+    "why": "Returning attackers use the same door, so watch for it hard during recovery."
+   },
+   {
+    "q": "What belongs in the lessons-learned phase?",
+    "items": [
+     "Specific, owned, tracked remediation actions with dates",
+     "A narrative of what happened",
+     "A list of who to blame",
+     "A summary for marketing"
+    ],
+    "correct": 0,
+    "why": "Findings without owners and dates do not get fixed, and the incident repeats."
+   },
+   {
+    "q": "An executive asks for an update before you have scope. What do you say?",
+    "items": [
+     "What is confirmed, what is unknown, and when the next update will be",
+     "A confident guess at the scope",
+     "Nothing at all",
+     "That everything is fine"
+    ],
+    "correct": 0,
+    "why": "Accurate uncertainty beats confident speculation, which becomes a quote later."
+   }
+  ]
+ }
+}

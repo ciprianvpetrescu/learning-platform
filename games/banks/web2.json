@@ -1,0 +1,345 @@
+{
+ "game-auth-bypass": {
+  "kind": "quiz",
+  "intro": "Identify the flaw and why it matters.",
+  "challenges": [
+   {
+    "q": "A login sets a cookie role=admin for admins. Flaw?",
+    "a": [
+     "Nothing",
+     "Client-controlled authorisation, trivially changed to admin",
+     "Weak hashing",
+     "No HTTPS"
+    ],
+    "c": 1,
+    "why": "A cookie the client can edit must never hold a privilege decision."
+   },
+   {
+    "q": "Password reset link contains reset_token=base64(username+timestamp). Flaw?",
+    "a": [
+     "Nothing",
+     "Predictable and forgeable for any user",
+     "Too long",
+     "Needs HTTPS only"
+    ],
+    "c": 1,
+    "why": "Encoded is not signed. Anyone can mint a token for any account."
+   },
+   {
+    "q": "The JWT header accepts alg none and the server honours it. Impact?",
+    "a": [
+     "None",
+     "Tokens can be forged with no signature",
+     "Slower",
+     "Encryption disabled"
+    ],
+    "c": 1,
+    "why": "If the header selects the verification method, an attacker selects none."
+   },
+   {
+    "q": "Login errors differ: user not found versus invalid password. Flaw?",
+    "a": [
+     "Good UX",
+     "User enumeration",
+     "Rate limiting",
+     "Session fixation"
+    ],
+    "c": 1,
+    "why": "It reveals which accounts exist before any password attack."
+   },
+   {
+    "q": "The session ID is unchanged after login. Flaw?",
+    "a": [
+     "Nothing",
+     "Session fixation",
+     "Weak cookie",
+     "No CSRF"
+    ],
+    "c": 1,
+    "why": "An attacker who pre-set the ID now shares the authenticated session."
+   },
+   {
+    "q": "Password reset step 2 accepts a new password without rechecking the step 1 token. Flaw?",
+    "a": [
+     "Nothing",
+     "Broken flow, reset any account by skipping validation",
+     "Slow UX",
+     "No MFA"
+    ],
+    "c": 1,
+    "why": "Each step must independently validate the previous authorisation."
+   },
+   {
+    "q": "An admin endpoint hides its button in JavaScript. Flaw?",
+    "a": [
+     "Nothing",
+     "The endpoint is unprotected; the UI is not a control",
+     "Slow",
+     "Needs HTTPS"
+    ],
+    "c": 1,
+    "why": "Hiding the button is cosmetic. The request still succeeds."
+   },
+   {
+    "q": "A JWT is signed with the secret 'secret123'. Flaw?",
+    "a": [
+     "Nothing",
+     "Weak secret, crackable offline to forge tokens for any user",
+     "Too long",
+     "Algorithm confusion only"
+    ],
+    "c": 1,
+    "why": "Recovering the signing key means minting any token."
+   }
+  ]
+ },
+ "game-ecb-detect": {
+  "kind": "quiz",
+  "intro": "Which mode produced this, and how can you tell?",
+  "challenges": [
+   {
+    "q": "Ciphertext blocks: block1 equals block4 of the same message. Which mode?",
+    "a": [
+     "CBC",
+     "ECB",
+     "CTR",
+     "GCM"
+    ],
+    "c": 1,
+    "why": "Identical ciphertext blocks mean identical plaintext encrypted independently, which is ECB."
+   },
+   {
+    "q": "Why is ECB unsuitable even for encrypted data at rest?",
+    "a": [
+     "Too slow",
+     "Identical plaintext blocks leak structure and patterns",
+     "Needs more keys",
+     "Not authenticated only"
+    ],
+    "c": 1,
+    "why": "Repeated data produces repeated ciphertext, which is observable."
+   },
+   {
+    "q": "Which mode needs a unique IV and provides authentication?",
+    "a": [
+     "ECB",
+     "CBC",
+     "GCM",
+     "CFB"
+    ],
+    "c": 2,
+    "why": "GCM is authenticated encryption and requires a nonce that is never reused."
+   },
+   {
+    "q": "In CBC, what does a padding oracle let an attacker do?",
+    "a": [
+     "Recover the key",
+     "Decrypt ciphertext byte by byte using the error signal",
+     "Speed up brute force",
+     "Disable TLS"
+    ],
+    "c": 1,
+    "why": "The oracle reveals whether padding is valid, which leaks plaintext one byte at a time."
+   },
+   {
+    "q": "Which mode turns a block cipher into a stream cipher?",
+    "a": [
+     "ECB",
+     "CBC",
+     "CTR",
+     "None"
+    ],
+    "c": 2,
+    "why": "CTR generates a keystream and XORs it, so reusing the nonce breaks it."
+   },
+   {
+    "q": "A TLS record shows TLS 1.0 negotiated while the client offered 1.3. What might this indicate?",
+    "a": [
+     "Nothing",
+     "A downgrade attempt or a very old server",
+     "Perfect security",
+     "Certificate expiry"
+    ],
+    "c": 1,
+    "why": "Choosing the oldest offered version is the signature of a downgrade."
+   }
+  ]
+ },
+ "game-csrf-forge": {
+  "kind": "builder",
+  "intro": "Assemble a working cross-site request.",
+  "challenges": [
+   {
+    "q": "Target: POST /email/change with email field. No CSRF token, cookie not SameSite. Which payload works?",
+    "items": [
+     "An auto-submitting form POSTing the email field",
+     "An img tag pointing at the endpoint",
+     "An anchor the user must click",
+     "A cross-origin fetch call"
+    ],
+    "correct": 0,
+    "why": "An auto-submitting form is the standard CSRF payload. img only works for GET, and fetch is blocked cross-origin without CORS."
+   },
+   {
+    "q": "Same target but it accepts GET. Simplest payload?",
+    "items": [
+     "A single img tag with the parameters in the query string",
+     "A form POST",
+     "A script alert",
+     "An iframe to the homepage"
+    ],
+    "correct": 0,
+    "why": "A state-changing GET falls to one image tag, which is why state changes must be POST."
+   },
+   {
+    "q": "The session cookie is SameSite=Lax and the action is POST. Does it work?",
+    "items": [
+     "Yes, from any page",
+     "No, Lax blocks cross-site POST; only a top-level GET navigation would send it",
+     "Yes over HTTPS",
+     "Only in Firefox"
+    ],
+    "correct": 1,
+    "why": "Lax permits top-level GET navigations but not cross-site POSTs or subresource requests."
+   },
+   {
+    "q": "A token is present but identical for every user and never expires. Does the defence hold?",
+    "items": [
+     "Yes",
+     "No, an attacker can fetch their own token and reuse it",
+     "Yes if HTTPS",
+     "Only sometimes"
+    ],
+    "correct": 1,
+    "why": "The token must be bound to the session and unpredictable to provide any protection."
+   },
+   {
+    "q": "The request is JSON and the API only accepts Content-Type application/json. Why does this help?",
+    "items": [
+     "It does not",
+     "Simple cross-site form posts cannot set that content type, so no CORS preflight passes",
+     "JSON is encrypted",
+     "It is faster"
+    ],
+    "correct": 1,
+    "why": "Requiring a content type that forms cannot produce forces a preflight, which the server can then refuse."
+   }
+  ]
+ },
+ "game-secure-review": {
+  "kind": "quiz",
+  "intro": "Find the vulnerability in the snippet and pick the real fix.",
+  "challenges": [
+   {
+    "q": "Python: cursor.execute(\"SELECT * FROM users WHERE name = '%s'\" % name). Fix?",
+    "a": [
+     "Escape quotes",
+     "cursor.execute with a parameter placeholder and a tuple of values",
+     "Block SELECT",
+     "Hide errors"
+    ],
+    "c": 1,
+    "why": "Parameters separate the query structure from the data at the protocol level."
+   },
+   {
+    "q": "Node: res.send(`<h1>Hello ${req.query.name}</h1>`). Fix?",
+    "a": [
+     "Strip script tags",
+     "Escape or template-render the value with autoescaping",
+     "Block angle brackets",
+     "Add a CSP only"
+    ],
+    "c": 1,
+    "why": "Contextual output encoding from a template engine that escapes by default removes the class of bug."
+   },
+   {
+    "q": "PHP: include($_GET[page]). Fix?",
+    "a": [
+     "Validate against an allowlist of permitted pages",
+     "Strip slashes",
+     "Add a WAF",
+     "Rename the script"
+    ],
+    "c": 0,
+    "why": "Allowlisting removes arbitrary path and wrapper input entirely."
+   },
+   {
+    "q": "Java: getConnection(user, pass, ADMIN_PASSWORD_HARDCODED). Fix?",
+    "a": [
+     "Rotate the literal",
+     "Load from a secret store or environment",
+     "Base64 it",
+     "Comment it out"
+    ],
+    "c": 1,
+    "why": "Secrets belong outside source, loaded at runtime, and rotated on exposure."
+   },
+   {
+    "q": "An endpoint takes userId from the request body and returns that user record after checking the caller is authenticated. Fix?",
+    "a": [
+     "Add rate limiting",
+     "Derive the user from the session, or verify the caller may access that specific object",
+     "Log the request",
+     "Use POST instead"
+    ],
+    "c": 1,
+    "why": "Authentication is not authorisation. The object-level check is missing."
+   },
+   {
+    "q": "A password is stored as md5(password). Fix?",
+    "a": [
+     "Use sha256",
+     "Use bcrypt, scrypt or Argon2 with a per-user salt",
+     "Add a pepper only",
+     "Base64 it"
+    ],
+    "c": 1,
+    "why": "Fast general-purpose hashes are wrong for passwords regardless of digest length."
+   },
+   {
+    "q": "A shell command: os.system(\"ping \" + host). Fix?",
+    "a": [
+     "Escape semicolons",
+     "Use an argument array with a library that does not invoke a shell",
+     "Allow only digits",
+     "Add a timeout"
+    ],
+    "c": 1,
+    "why": "Removing the shell removes the interpretation of metacharacters entirely."
+   },
+   {
+    "q": "An API returns a stack trace with the database schema on error. Fix?",
+    "a": [
+     "Rename the tables",
+     "Return a generic error to the client and log detail server-side",
+     "Disable the database",
+     "Add a 404"
+    ],
+    "c": 1,
+    "why": "Verbose errors are reconnaissance, and the detail belongs in logs only."
+   },
+   {
+    "q": "A JWT is verified without checking the exp claim. Fix?",
+    "a": [
+     "Use a longer secret",
+     "Validate exp, iss and aud, and enforce the expected algorithm",
+     "Base64 the token",
+     "Add HTTPS"
+    ],
+    "c": 1,
+    "why": "Without expiry validation a stolen token is valid forever."
+   },
+   {
+    "q": "A file upload saves to the web root with the user-supplied filename. Fix?",
+    "a": [
+     "Rename extension only",
+     "Store outside the web root with a generated name and validate content type and size",
+     "Block .php only",
+     "Add a size limit"
+    ],
+    "c": 1,
+    "why": "Not reachable and not executable makes any stored content inert."
+   }
+  ]
+ }
+}
