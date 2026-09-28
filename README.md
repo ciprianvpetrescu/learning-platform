@@ -8,6 +8,28 @@ attack workstation is a Kali container in the browser tab next to the target.
 Everything is self-hosted. The whole platform is one FastAPI process, a Docker
 daemon and a handful of images built from this repository.
 
+## Screenshots
+
+**Dashboard** - the twelve subject areas, points, flags captured and machines running.
+
+![Dashboard](docs/images/01-dashboard.png)
+
+**Module catalogue** - reading, quizzes and scored practice per subject.
+
+![Module catalogue](docs/images/02-module-catalog.png)
+
+**Module reading** - lesson text with the quiz and exercise entry points alongside.
+
+![Module reading](docs/images/03-module-reading.png)
+
+**Vulnerable boxes** - fourteen targets with tier, category, port surface and hints.
+
+![Vulnerable boxes](docs/images/04-vulnerable-boxes.png)
+
+**Leaderboard** - points from quizzes, games and captured flags.
+
+![Leaderboard](docs/images/05-leaderboard.png)
+
 ## What it is
 
 - **Modules** — twelve categories (Networking, Linux, Web Application Security,
